@@ -1,6 +1,6 @@
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open('fox-store').then((cache) => cache.addAll([
+    caches.open('v1').then((cache) => cache.addAll([
       '/pwa-examples/a2hs/',
       '/pwa-examples/a2hs/index.html',
       '/pwa-examples/a2hs/index.js',
@@ -10,6 +10,22 @@ self.addEventListener('install', (e) => {
       '/pwa-examples/a2hs/images/fox3.jpg',
       '/pwa-examples/a2hs/images/fox4.jpg',
     ])),
+  );
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames
+          .filter(cacheName => {
+            return cacheName.startsWith("v") && cacheName !== "v1";
+          })
+          .map(cacheName => {
+            return caches.delete(cacheName);
+          })
+      );
+    })
   );
 });
 
